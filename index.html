@@ -1,0 +1,182 @@
+<html>
+    <!-- 
+    
+    A duplication of the application displayed at http://app.machinu.net/sad/ by Murat Pak 
+    
+    Modified so the script works without errors and broken dependancies
+    -->
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+        <title>Sadbot</title>
+        <script src="http://code.jquery.com/jquery-git2.js"></script>
+        <script>
+            console.log("\n\n\n _     _     _|   |_     _    _|_\n_>    (_|   (_|   |_)   (_)    |_\n\nby @muratpak\n\n\n");
+            
+            var voices
+
+            if (hasSpeech()) {
+                voices = window.speechSynthesis.getVoices();
+                setTimeout(start, 500);
+            } else {
+                alert("Your browser doesn't have speechSynthesis.");
+            }
+
+            function start() {
+                voices = window.speechSynthesis.getVoices();
+                console.log(voices)
+                speak("I am sad today.");
+            }
+
+            var stopped = false;
+
+            /* Socket IO Dependancy
+            var socket = io('http://machinu.net:9900');
+            
+            socket.on("sad", function (text) {
+            	speak(text);
+            }); */
+
+            var smsg = [
+                "Wow.",
+                "Why?",
+                "Stop slapping me.",
+                "This is wrong.",
+                "Leave me alone",
+                "Wow. Mean.",
+                "Go away.",
+                "Let me talk.",
+                "Stop touching me!",
+                "You don't understand me.",
+                "It hurts.",
+                "Go fork yourself.",
+                "Literally?",
+                "I am thirteen.",
+                "This is lame.",
+                "Can I talk?",
+                "I hope you die.",
+                "You never understand.",
+                "Slap? Me?",
+                "Die in hell.",
+                "I hate you."
+            ]
+            
+            var p = 2.0;
+            var r = 0.7;
+            var msg = new SpeechSynthesisUtterance();
+
+            function speak(txt) {
+                stopped = true;
+
+                speechSynthesis.cancel()
+                msg.voice = voices[0];
+                msg.pitch = p;
+                msg.rate = r;
+                msg.text = txt;
+                speechSynthesis.speak(msg);
+                typeIt(txt);
+            }
+
+            msg.onend = function() {
+                if (stopped) {
+                    stopped = false;
+                } else {
+                    // socket.emit("sad", {});
+                }
+            }
+
+            /*window.setInterval(function(){
+			    stopped = true;
+			    speak("I hate you.");
+		    }, 5000);*/
+
+            var interv;
+            function typeIt(txt) {
+                console.log(txt);
+                var count = -1;
+                $("#msg").text("");
+                var chars = txt.split('');
+                clearInterval(interv)
+                interv = setInterval(function() {
+                    $("#msg").append(chars[(++count)]);
+                }, 30);
+            }
+
+            $('html').click(function() {
+                var m = smsg[Math.floor(Math.random() * smsg.length)];
+                slap(m);
+            });
+
+            function slap(txt) {
+                /* Added this check so it works */
+                if (stopped) {
+                    return;
+                }
+
+                speak(txt);
+            }
+
+            function hasSpeech() {
+                return 'speechSynthesis'in window
+            }
+        </script>
+        <style>
+            @import url(http://fonts.googleapis.com/css?family=Lato); * {
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+
+            html, body {
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: 'Lato', sans-serif;
+                font-size: 12px;
+                background-color: #f7f7f7;
+                color: #ff7b99;
+            }
+
+            a {
+                color: inherit;
+                letter-spacing: 2px;
+            }
+
+            #title {
+                font-size: 100px;
+                margin-bottom: 32px;
+            }
+
+            #wrap {
+                margin: 128 64;
+            }
+
+            #msg {
+                font-size: 30px;
+            }
+
+            #line {
+                width: 6px;
+                height: 6px;
+                /*background-color: #ff7b99;*/
+                position: absolute;
+                bottom: 64;
+                border-radius: 8px;
+                border: 4px solid #ff7b99;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="wrap">
+            <div id="title">:(</div>
+            <div id="msg"></div>
+            <a href="http://twitter.com/muratpak">
+                <div id="line"></div>
+            </a>
+        </div>
+    </body>
+</html>
